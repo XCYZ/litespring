@@ -9,7 +9,13 @@
   		<dependency>
   			<artifactId>junit</artifactId>
   			<groupId>junit</groupId>
-  			<version>4.12</version>
+  			<version>4.11</version>
+  			<scope>test</scope>
+  		</dependency>
+  		<dependency>
+  			<artifactId>dom4j</artifactId>
+  			<groupId>dom4j</groupId>
+  			<version>1.6.1</version>
   		</dependency>
   </dependencies>
   <build>  
