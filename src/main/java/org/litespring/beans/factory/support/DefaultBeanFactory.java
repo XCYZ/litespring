@@ -8,7 +8,8 @@ import org.litespring.beans.factory.BeanCreationException;
 import org.litespring.beans.factory.config.ConfigurableBeanFactory;
 import org.litespring.util.ClassUtils;
 
-public class DefaultBeanFactory implements ConfigurableBeanFactory,BeanDefinitionRegistry {
+public class DefaultBeanFactory extends DefaultSingletonBeanRegistry 
+implements ConfigurableBeanFactory,BeanDefinitionRegistry{
 	private Map<String,BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
 	private ClassLoader classLoader = null;
 	
@@ -27,11 +28,16 @@ public class DefaultBeanFactory implements ConfigurableBeanFactory,BeanDefinitio
 		if(db == null) {
 			throw new BeanCreationException("beanDefinition does not exist");
 		}
-		try {
-			obj =  getClassLoader().loadClass(db.getClassName()).newInstance();
-		} catch (Exception e) {
-			throw new BeanCreationException(e.getMessage(), e);
+		if(db.isSingleton()) {
+				Object singleObj = getSingleton(id);
+				if(singleObj == null) {
+					obj =  createBean(db);
+					registrySingleton(id, obj);
+					return obj;
+				}
+				return singleObj;
 		}
+		obj =  createBean(db);
 		return obj;
 	}
 
@@ -51,5 +57,17 @@ public class DefaultBeanFactory implements ConfigurableBeanFactory,BeanDefinitio
 		return classLoader != null?classLoader:ClassUtils.getDefaultClassLoader();
 	}
 	
+	/**
+	 * 反射创建对象
+	 * @param db
+	 * @return
+	 */
+	private Object createBean(BeanDefinition db) {
+		try {
+			return getClassLoader().loadClass(db.getClassName()).newInstance();
+		} catch (Exception e) {
+			throw new BeanCreationException(e.getMessage(), e);
+		}
+	}
 
 }

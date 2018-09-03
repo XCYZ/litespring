@@ -1,7 +1,9 @@
 package org.litespring.test.v1;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,8 +30,12 @@ public class BeanFactoryTest {
 	public void testGetBean() {
 		Resource resource = new ClassPathResource("petstore-v1.xml");
 		reader.loadBeanDefinitions(resource);
-		BeanDefinition bd = beanFactory.getBeanDefinition("petStore");
-		assertEquals("org.litespring.service.v1.PetStoreService", bd.getClassName());
+		BeanDefinition db = beanFactory.getBeanDefinition("petStore");
+		assertTrue(db.isSingleton());
+		assertFalse(db.isPrototype());
+		assertEquals(BeanDefinition.SCOPE_DEFAULT, db.getScope());
+		assertEquals(beanFactory.getBean("petStore"), beanFactory.getBean("petStore"));
+		assertEquals("org.litespring.service.v1.PetStoreService", db.getClassName());
 		PetStoreService service = (PetStoreService)beanFactory.getBean("petStore");
 		assertNotNull(service);
 	}
