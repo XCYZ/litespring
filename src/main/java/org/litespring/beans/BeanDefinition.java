@@ -1,5 +1,7 @@
 package org.litespring.beans;
 
+import java.util.List;
+
 public interface BeanDefinition {
 	public final static String SCOPE_DEFAULT = "";
 	public final static String SCOPE_SINGLETON = "singleton";
@@ -14,5 +16,7 @@ public interface BeanDefinition {
 	String getScope();
 	
 	void setScope(String scope);
+
+	List<PropertyValue> getPropertyValues();
 
 }

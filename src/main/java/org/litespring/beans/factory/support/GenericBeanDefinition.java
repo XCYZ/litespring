@@ -1,6 +1,9 @@
 package org.litespring.beans.factory.support;
 
+import java.util.List;
+
 import org.litespring.beans.BeanDefinition;
+import org.litespring.beans.PropertyValue;
 
 public class GenericBeanDefinition implements BeanDefinition {
 	private String className;
@@ -42,6 +45,11 @@ public class GenericBeanDefinition implements BeanDefinition {
 		this.scope = scope;
 		this.isSingleton = SCOPE_SINGLETON.equals(scope) || SCOPE_DEFAULT.equals(scope);
 		this.isPrototype = SCOPE_PROTOTYPE.equals(scope);
+	}
+
+	@Override
+	public List<PropertyValue> getPropertyValues() {
+		return null;
 	}
 	
 }
