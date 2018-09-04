@@ -1,9 +1,16 @@
 package org.litespring.beans.factory.support;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.litespring.beans.BeanDefinition;
+import org.litespring.beans.PropertyValue;
 import org.litespring.beans.factory.BeanCreationException;
 import org.litespring.beans.factory.config.ConfigurableBeanFactory;
 import org.litespring.util.ClassUtils;
@@ -63,11 +70,60 @@ implements ConfigurableBeanFactory,BeanDefinitionRegistry{
 	 * @return
 	 */
 	private Object createBean(BeanDefinition db) {
+		Object instance = initBean(db);
+		pupulateBean(instance, db);
+		return instance;
+	}
+	
+	/**
+	 * 初始化bean
+	 * @param db
+	 * @return
+	 */
+	private Object initBean(BeanDefinition db) {
 		try {
 			return getClassLoader().loadClass(db.getClassName()).newInstance();
 		} catch (Exception e) {
 			throw new BeanCreationException(e.getMessage(), e);
 		}
 	}
+	
+	
+	/**
+	 * 反射注入属性
+	 * @param instance
+	 * @param bd
+	 */
+	private void pupulateBean(Object instance,BeanDefinition bd) {
+		List<PropertyValue> propertyValues = bd.getPropertyValues();
+		if(propertyValues.size()==0) {
+			return;
+		}
+		BeanDefinitionResolver resolver = new BeanDefinitionResolver(this);
+			try {
+				for (PropertyValue propertyValue : propertyValues) {
+					Object obj = propertyValue.getValue();
+					String name = propertyValue.getName();
+					Object resolveValue = resolver.resolveValueIfNecessary(obj);
+					BeanInfo beanInfo = Introspector.getBeanInfo(instance.getClass());
+					PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+					for (PropertyDescriptor propertyDescriptor : pds) {
+						if(propertyDescriptor.getName().equals(name)) {
+							propertyDescriptor.getWriteMethod().invoke(instance, resolveValue);
+							break;
+						}
+					}
+				}
+			} catch (IntrospectionException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+	}
+	
 
 }

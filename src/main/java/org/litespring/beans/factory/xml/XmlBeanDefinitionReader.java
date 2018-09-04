@@ -11,7 +11,10 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.litespring.beans.BeanDefinition;
+import org.litespring.beans.PropertyValue;
 import org.litespring.beans.factory.BeanStoreException;
+import org.litespring.beans.factory.config.RunTimeBeanReference;
+import org.litespring.beans.factory.config.TypeStringValue;
 import org.litespring.beans.factory.support.BeanDefinitionRegistry;
 import org.litespring.beans.factory.support.GenericBeanDefinition;
 import org.litespring.core.io.Resource;
@@ -44,6 +47,7 @@ public class XmlBeanDefinitionReader {
 				if(scope != null) {
 					bd.setScope(scope);
 				}
+				parsePropertyElement(element, bd);
 				registry.registryBeanDefinition(id, bd);
 			}
 		} catch (Exception e) {
@@ -62,7 +66,7 @@ public class XmlBeanDefinitionReader {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void parsePropertyElement(Element element,BeanDefinition bd) {
+	private void parsePropertyElement(Element element,BeanDefinition bd) {
 		Iterator<Element> iterator = element.elementIterator(PROPERTY_REF);
 		while(iterator.hasNext()) {
 			Element e = iterator.next();
@@ -71,12 +75,26 @@ public class XmlBeanDefinitionReader {
 				logger.fatal("Tag 'property' must have a valid name");
 				return;
 			}
-			
+			Object obj=parsePropertyValue(e,pname);
+			PropertyValue propertyValue = new PropertyValue(pname, obj);
+			bd.getPropertyValues().add(propertyValue);
 		}
 	}
 	
-//	public Object parsePropertyValue(Element e,BeanDefinition bd,String propertyName) {
-//		boolean hasRefAttr = (e.attribute(REF_ATTR)==null);
-//		boolean hasValueAttr = (e.attribute(VALUE_ATTR)==null);
-//	}
+	private Object parsePropertyValue(Element e,String propertyName) {
+		boolean hasRefAttr = (e.attribute(REF_ATTR)!=null);
+		boolean hasValueAttr = (e.attribute(VALUE_ATTR)!=null);
+		if(hasRefAttr) {
+			String refName = e.attributeValue(REF_ATTR);
+			if(StringUtils.isBlank(refName)) {
+				logger.error("ref is empty!");
+			}
+			RunTimeBeanReference ref = new RunTimeBeanReference(refName);
+			return ref;
+		}else if(hasValueAttr) {
+			return  new TypeStringValue(e.attributeValue(VALUE_ATTR));
+		}else {
+			throw new RuntimeException("must specific a ref or a value");
+		}
+	}
 }

@@ -26,8 +26,14 @@ public class BeanDefinitionTest {
 	   Assert.assertNotNull(propertyValue);
 	   Assert.assertTrue(propertyValue.getValue() instanceof RunTimeBeanReference);
    }
+   
 
-   private PropertyValue getPropertyValue(String string, List<PropertyValue> propertyValues) {
+   private PropertyValue getPropertyValue(String name, List<PropertyValue> propertyValues) {
+	   for (PropertyValue propertyValue : propertyValues) {
+		   if(propertyValue.getName().equals(name)) {
+			   return propertyValue;
+		   }
+	   }
 	return null;
    }
 }
