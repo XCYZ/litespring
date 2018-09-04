@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -17,6 +20,7 @@ import static org.litespring.beans.factory.support.BeanDefinitionRegistry.*;
 
 public class XmlBeanDefinitionReader {
 	private BeanDefinitionRegistry registry = null;
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	public XmlBeanDefinitionReader(BeanDefinitionRegistry registry) {
 		this.registry = registry;
@@ -56,4 +60,23 @@ public class XmlBeanDefinitionReader {
 			}
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void parsePropertyElement(Element element,BeanDefinition bd) {
+		Iterator<Element> iterator = element.elementIterator(PROPERTY_REF);
+		while(iterator.hasNext()) {
+			Element e = iterator.next();
+			String pname = e.attributeValue(NAME_ATTR);
+			if(StringUtils.isBlank(pname)) {
+				logger.fatal("Tag 'property' must have a valid name");
+				return;
+			}
+			
+		}
+	}
+	
+//	public Object parsePropertyValue(Element e,BeanDefinition bd,String propertyName) {
+//		boolean hasRefAttr = (e.attribute(REF_ATTR)==null);
+//		boolean hasValueAttr = (e.attribute(VALUE_ATTR)==null);
+//	}
 }

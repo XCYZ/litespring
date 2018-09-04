@@ -28,7 +28,6 @@ public class BeanDefinitionTest {
    }
 
    private PropertyValue getPropertyValue(String string, List<PropertyValue> propertyValues) {
-	// TODO Auto-generated method stub
 	return null;
    }
 }
