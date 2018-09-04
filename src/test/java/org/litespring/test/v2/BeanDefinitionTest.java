@@ -1,6 +1,5 @@
 package org.litespring.test.v2;
 
-import java.lang.reflect.GenericArrayType;
 import java.util.List;
 
 import org.junit.Assert;
