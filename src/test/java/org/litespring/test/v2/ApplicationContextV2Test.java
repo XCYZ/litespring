@@ -1,6 +1,7 @@
 package org.litespring.test.v2;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.litespring.context.ApplicationContext;
@@ -14,5 +15,6 @@ public class ApplicationContextV2Test {
 		PetStoreService ps = (PetStoreService)context.getBean("petStore");
 		assertNotNull(ps.getAccountDao());
 		assertNotNull(ps.getItemDao());
+		assertTrue(ps.getOwner().equals("caiyang"));
 	}
 }
