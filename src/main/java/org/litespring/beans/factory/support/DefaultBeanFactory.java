@@ -9,10 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.litespring.beans.BeanDefinition;
 import org.litespring.beans.PropertyValue;
-import org.litespring.beans.SimpelTypeConverter;
-import org.litespring.beans.TypeConverter;
 import org.litespring.beans.factory.BeanCreationException;
 import org.litespring.beans.factory.config.ConfigurableBeanFactory;
 import org.litespring.util.ClassUtils;
@@ -96,6 +95,39 @@ implements ConfigurableBeanFactory,BeanDefinitionRegistry{
 	 * @param instance
 	 * @param bd
 	 */
+//	private void pupulateBean(Object instance,BeanDefinition bd) {
+//		List<PropertyValue> propertyValues = bd.getPropertyValues();
+//		if(propertyValues.size()==0) {
+//			return;
+//		}
+//		BeanDefinitionResolver resolver = new BeanDefinitionResolver(this);
+//			try {
+//				for (PropertyValue propertyValue : propertyValues) {
+//					Object obj = propertyValue.getValue();
+//					String name = propertyValue.getName();
+//					Object resolveValue = resolver.resolveValueIfNecessary(obj);
+//					TypeConverter converter = new SimpelTypeConverter();
+//					BeanInfo beanInfo = Introspector.getBeanInfo(instance.getClass());
+//					PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+//					for (PropertyDescriptor propertyDescriptor : pds) {
+//						if(propertyDescriptor.getName().equals(name)) {
+//							Object convertValue = converter.convertIfNessary(resolveValue, propertyDescriptor.getPropertyType());
+//							propertyDescriptor.getWriteMethod().invoke(instance, convertValue);
+//							break;
+//						}
+//					}
+//				}
+//			} catch (IntrospectionException e) {
+//				e.printStackTrace();
+//			} catch (IllegalAccessException e) {
+//				e.printStackTrace();
+//			} catch (IllegalArgumentException e) {
+//				e.printStackTrace();
+//			} catch (InvocationTargetException e) {
+//				e.printStackTrace();
+//			}
+//	}
+	
 	private void pupulateBean(Object instance,BeanDefinition bd) {
 		List<PropertyValue> propertyValues = bd.getPropertyValues();
 		if(propertyValues.size()==0) {
@@ -107,14 +139,11 @@ implements ConfigurableBeanFactory,BeanDefinitionRegistry{
 					Object obj = propertyValue.getValue();
 					String name = propertyValue.getName();
 					Object resolveValue = resolver.resolveValueIfNecessary(obj);
-					TypeConverter converter = new SimpelTypeConverter();
 					BeanInfo beanInfo = Introspector.getBeanInfo(instance.getClass());
 					PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
 					for (PropertyDescriptor propertyDescriptor : pds) {
 						if(propertyDescriptor.getName().equals(name)) {
-							Object convertValue = converter.convertIfNessary(resolveValue, propertyDescriptor.getPropertyType());
-							propertyDescriptor.getWriteMethod().invoke(instance, convertValue);
-							break;
+							BeanUtils.setProperty(instance, name, resolveValue);
 						}
 					}
 				}
