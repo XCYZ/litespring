@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-import org.apache.commons.lang3.StringUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -18,6 +18,7 @@ import org.litespring.beans.factory.config.TypeStringValue;
 import org.litespring.beans.factory.support.BeanDefinitionRegistry;
 import org.litespring.beans.factory.support.GenericBeanDefinition;
 import org.litespring.core.io.Resource;
+import org.litespring.util.StringUtils;
 
 import static org.litespring.beans.factory.support.BeanDefinitionRegistry.*;
 
@@ -71,7 +72,7 @@ public class XmlBeanDefinitionReader {
 		while(iterator.hasNext()) {
 			Element e = iterator.next();
 			String pname = e.attributeValue(NAME_ATTR);
-			if(StringUtils.isBlank(pname)) {
+			if(!StringUtils.hasText(pname)) {
 				logger.fatal("Tag 'property' must have a valid name");
 				return;
 			}
@@ -86,7 +87,7 @@ public class XmlBeanDefinitionReader {
 		boolean hasValueAttr = (e.attribute(VALUE_ATTR)!=null);
 		if(hasRefAttr) {
 			String refName = e.attributeValue(REF_ATTR);
-			if(StringUtils.isBlank(refName)) {
+			if(!StringUtils.hasText(refName)) {
 				logger.error("ref is empty!");
 			}
 			RunTimeBeanReference ref = new RunTimeBeanReference(refName);

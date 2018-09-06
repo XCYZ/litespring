@@ -11,6 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.litespring.beans.BeanDefinition;
 import org.litespring.beans.PropertyValue;
+import org.litespring.beans.SimpelTypeConverter;
+import org.litespring.beans.TypeConverter;
 import org.litespring.beans.factory.BeanCreationException;
 import org.litespring.beans.factory.config.ConfigurableBeanFactory;
 import org.litespring.util.ClassUtils;
@@ -105,11 +107,13 @@ implements ConfigurableBeanFactory,BeanDefinitionRegistry{
 					Object obj = propertyValue.getValue();
 					String name = propertyValue.getName();
 					Object resolveValue = resolver.resolveValueIfNecessary(obj);
+					TypeConverter converter = new SimpelTypeConverter();
 					BeanInfo beanInfo = Introspector.getBeanInfo(instance.getClass());
 					PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
 					for (PropertyDescriptor propertyDescriptor : pds) {
 						if(propertyDescriptor.getName().equals(name)) {
-							propertyDescriptor.getWriteMethod().invoke(instance, resolveValue);
+							Object convertValue = converter.convertIfNessary(resolveValue, propertyDescriptor.getPropertyType());
+							propertyDescriptor.getWriteMethod().invoke(instance, convertValue);
 							break;
 						}
 					}

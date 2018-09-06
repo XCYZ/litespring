@@ -2,25 +2,31 @@ package org.litespring.beans.propertyeditor;
 
 import java.beans.PropertyEditorSupport;
 
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.litespring.util.StringUtils;
+
 
 public class CustomBooleanEditor extends PropertyEditorSupport{
 	private final boolean allowEmpty;
+	private static final String TRUE = "true";
+	private static final String FALSE = "false";
+	
 	public CustomBooleanEditor(boolean allowEmpty) {
 		this.allowEmpty = allowEmpty;
 	}
+
 	@Override
 	public void setAsText(String text) throws IllegalArgumentException {
-		if(allowEmpty && (text == null || StringUtils.isBlank(text))) {
+		if(allowEmpty && !StringUtils.hasText(text)) {
 			setValue(null);
 		}else {
-			if(text == null || StringUtils.isBlank(text)) {
-				throw new IllegalArgumentException("param can not be null or blank");
-			}else {
-				setValue(BooleanUtils.toBoolean(text));
+			if(TRUE.equals(text)) {
+				setValue(true);
+			}
+			if(FALSE.equals(text)) {
+				setValue(false);
 			}
 		}
 	}
+
 	
 }

@@ -12,7 +12,7 @@ public class TypeConverterTest {
 		TypeConverter converter = new SimpelTypeConverter();
 		try {
 			converter.convertIfNessary("3",Integer.class);
-			converter.convertIfNessary("eqweq",Integer.class);
+			converter.convertIfNessary("3.1",Integer.class);
 		}catch (TypeMisMatchException e) {
 			return;
 		}
