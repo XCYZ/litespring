@@ -20,9 +20,16 @@ import org.litespring.beans.factory.support.GenericBeanDefinition;
 import org.litespring.core.io.Resource;
 import org.litespring.util.StringUtils;
 
-import static org.litespring.beans.factory.support.BeanDefinitionRegistry.*;
 
 public class XmlBeanDefinitionReader {
+	public static final String ID_ATTR = "id";
+	public static final String CLASS_ATTR = "class";
+	public static final String SCOPE_ATTR = "scope";
+	public static final String PROPERTY_REF="property";
+	public static final String REF_ATTR="ref";
+	public static final String VALUE_ATTR = "value";
+	public static final String NAME_ATTR="name";
+	public static final String CONSTRUCTOR_ARG_ELEMENT ="constructor-arg";
 	private BeanDefinitionRegistry registry = null;
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -49,6 +56,7 @@ public class XmlBeanDefinitionReader {
 					bd.setScope(scope);
 				}
 				parsePropertyElement(element, bd);
+				parseConstructorArguments(element, bd);
 				registry.registryBeanDefinition(id, bd);
 			}
 		} catch (Exception e) {
@@ -97,5 +105,19 @@ public class XmlBeanDefinitionReader {
 		}else {
 			throw new RuntimeException("must specific a ref or a value");
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void parseConstructorArguments(Element element,BeanDefinition bd) {
+		Iterator<Element> iterator = element.elementIterator(CONSTRUCTOR_ARG_ELEMENT);
+		while(iterator.hasNext()) {
+			Element e = iterator.next();
+			parseConstructorArgument(e,bd);
+		}
+	}
+
+	private void parseConstructorArgument(Element e, BeanDefinition bd) {
+		Object value = parsePropertyValue(e, null);
+		bd.getConstructorArgument().addArgumentValue(value);
 	}
 }
