@@ -7,6 +7,10 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext{
 	public ClassPathXmlApplicationContext(String config) {
 		super(config);
 	}
+	
+	public ClassPathXmlApplicationContext(String config,ClassLoader cl) {
+		super(config,cl);
+	}
 
 	@Override
 	public Resource getResourceByPath(String path) {

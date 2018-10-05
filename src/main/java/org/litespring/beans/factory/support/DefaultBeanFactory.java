@@ -72,7 +72,9 @@ implements ConfigurableBeanFactory,BeanDefinitionRegistry{
 	 */
 	private Object createBean(BeanDefinition db) {
 		Object instance = initBean(db);
-		pupulateBean(instance, db);
+		if(!db.hasConstructorArgument()) {
+			pupulateBean(instance, db);
+		}
 		return instance;
 	}
 	
@@ -82,51 +84,18 @@ implements ConfigurableBeanFactory,BeanDefinitionRegistry{
 	 * @return
 	 */
 	private Object initBean(BeanDefinition db) {
-		try {
-			return getClassLoader().loadClass(db.getClassName()).newInstance();
-		} catch (Exception e) {
-			throw new BeanCreationException(e.getMessage(), e);
+		if(db.hasConstructorArgument()) {
+			ConstructorResolver resolver = new ConstructorResolver(this);
+			return resolver.autowireConstructor(db);
+		}else {
+			try {
+				return getClassLoader().loadClass(db.getClassName()).newInstance();
+			} catch (Exception e) {
+				throw new BeanCreationException(e.getMessage(), e);
+			}
 		}
 	}
 	
-	
-	/**
-	 * 反射注入属性
-	 * @param instance
-	 * @param bd
-	 */
-//	private void pupulateBean(Object instance,BeanDefinition bd) {
-//		List<PropertyValue> propertyValues = bd.getPropertyValues();
-//		if(propertyValues.size()==0) {
-//			return;
-//		}
-//		BeanDefinitionResolver resolver = new BeanDefinitionResolver(this);
-//			try {
-//				for (PropertyValue propertyValue : propertyValues) {
-//					Object obj = propertyValue.getValue();
-//					String name = propertyValue.getName();
-//					Object resolveValue = resolver.resolveValueIfNecessary(obj);
-//					TypeConverter converter = new SimpelTypeConverter();
-//					BeanInfo beanInfo = Introspector.getBeanInfo(instance.getClass());
-//					PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
-//					for (PropertyDescriptor propertyDescriptor : pds) {
-//						if(propertyDescriptor.getName().equals(name)) {
-//							Object convertValue = converter.convertIfNessary(resolveValue, propertyDescriptor.getPropertyType());
-//							propertyDescriptor.getWriteMethod().invoke(instance, convertValue);
-//							break;
-//						}
-//					}
-//				}
-//			} catch (IntrospectionException e) {
-//				e.printStackTrace();
-//			} catch (IllegalAccessException e) {
-//				e.printStackTrace();
-//			} catch (IllegalArgumentException e) {
-//				e.printStackTrace();
-//			} catch (InvocationTargetException e) {
-//				e.printStackTrace();
-//			}
-//	}
 	
 	private void pupulateBean(Object instance,BeanDefinition bd) {
 		List<PropertyValue> propertyValues = bd.getPropertyValues();

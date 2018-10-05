@@ -7,6 +7,10 @@ public class FileSystermXmlApplicationContext extends AbstractApplicationContext
 	public FileSystermXmlApplicationContext(String config) {
 		super(config);
 	}
+	
+	public FileSystermXmlApplicationContext(String config,ClassLoader cl) {
+		super(config,cl);
+	}
 
 	@Override
 	public Resource getResourceByPath(String path) {

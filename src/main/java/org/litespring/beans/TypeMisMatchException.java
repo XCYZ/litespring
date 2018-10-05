@@ -10,5 +10,12 @@ public class TypeMisMatchException extends RuntimeException {
 		this.clazz =clazz;
 	}
 
+	public Object getValue() {
+		return value;
+	}
+
+	public Class<?> getClazz() {
+		return clazz;
+	}
 
 }

@@ -30,6 +30,5 @@ public class ConstructorArgumentTest {
 		assertTrue(ref2.getBeanName().equals("itemDao"));
 		TypeStringValue value = (TypeStringValue)vhs.get(2).getValue();
 		assertTrue(value.getValue().equals("1"));
-		
 	}
 }

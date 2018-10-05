@@ -9,7 +9,6 @@ public class ConstructorArgument {
 	public List<ValueHolder> getArgumentValues() {
 		return Collections.unmodifiableList(argumentValues);
 	}
-	public void addValueHolderValue() {}
 	public int getArgumentCount() {
 		return argumentValues.size();
 	}
@@ -37,10 +36,5 @@ public class ConstructorArgument {
 		public Object getValue() {
 			return value;
 		}
-		
-		
-		
 	}
-	
-
 }

@@ -7,6 +7,7 @@ public interface BeanDefinition {
 	public final static String SCOPE_SINGLETON = "singleton";
 	public final static String SCOPE_PROTOTYPE = "prototype";
 	String getClassName();
+	String getId();
 
 	boolean isSingleton();
 
@@ -18,5 +19,7 @@ public interface BeanDefinition {
 
 	List<PropertyValue> getPropertyValues();
 	ConstructorArgument getConstructorArgument();
+	boolean hasConstructorArgument();
+
 
 }

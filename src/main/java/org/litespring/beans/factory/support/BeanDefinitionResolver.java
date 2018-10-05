@@ -11,7 +11,11 @@ public class BeanDefinitionResolver {
 	public BeanDefinitionResolver(BeanFactory factory) {
 		this.factory = factory;
 	}
-
+	/**
+	 * 这个是一个隐含的递归方法
+	 * @param obj
+	 * @return
+	 */
 	public Object resolveValueIfNecessary(Object obj) {
 		if(obj instanceof RunTimeBeanReference) {
 			RunTimeBeanReference ref = (RunTimeBeanReference) obj;
