@@ -8,14 +8,20 @@ import java.io.InputStream;
 import static org.litespring.util.Assert.*;
 
 public class FileSystermResource implements Resource {
-	private String filePath;
 	private File file;
 
 	public FileSystermResource(String config) {
 		notNull(config, "path can not be null");
-		filePath = config;
-		file = new File(filePath);
+		file = new File(config);
 	}
+	
+	
+
+	public FileSystermResource(File file) {
+		this.file = file;
+	}
+
+
 
 	@Override
 	public InputStream getInputStream() throws FileNotFoundException {
